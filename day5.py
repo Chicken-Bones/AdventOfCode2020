@@ -7,14 +7,9 @@ def seatID(p):
 if __name__ == "__main__":
     with open("input/day5.txt") as file:
         seats = [seatID(p) for p in file]
-        num_seats = max(seats)
-        min_seat = min(seats)
-        print(num_seats)
+        print(max(seats))
 
-        has_seat = [False] * (num_seats+1)
-        for s in seats:
-            has_seat[s] = True
-
-        print(has_seat[min_seat:].index(False) + min_seat)
+        seats.sort()
+        print(next(s1+1 for s1, s2 in zip(seats, seats[1:]) if s2 - s1 == 2))
 
 
