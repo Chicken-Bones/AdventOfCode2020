@@ -10,7 +10,7 @@ validators = {
         150 <= int(v[:-2]) <= 193 if v[-2:] == 'cm' else
         59 <= int(v[:-2]) <= 76 if v[-2:] == 'in' else
         False,
-    'hcl': lambda v: re.match(r"#[0-9a-f]{6}$", v) is not None,
+    'hcl': lambda v: re.match(r"#[0-9a-f]{6}$", v),
     'ecl': lambda v: v in eye_colors,
     'pid': lambda v: len(v) == 9 and v.isnumeric()
 }
