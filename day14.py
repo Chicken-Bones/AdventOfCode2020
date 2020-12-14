@@ -27,11 +27,23 @@ if __name__ == "__main__":
             else:
                 a, b = s.split(" = ")
                 addr = int(a[4:-1]) & ~mask | maskw
+
+                # option A
                 masks = [mask]
                 while masks[-1] > 0:
                     masks += [m & (masks[-1]-1) for m in masks]
 
                 for m in masks:
                     mem[m | addr] = int(b)
+
+                # option B
+                def write(m, addr):
+                    if m == 0:
+                        mem[addr] = int(b)
+                    else:
+                        write(m & (m-1), addr | m & -m)
+                        write(m & (m-1), addr)
+
+                write(mask, addr)
 
         print(sum(mem.values()))
