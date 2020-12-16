@@ -11,7 +11,7 @@ if __name__ == "__main__":
         lcm = 1
         dept = 0
         for b, d in bus_table:
-            i = next(i for i in range(b) if (dept+lcm*i) % b == (b-d) % b)
+            i = next(i for i in range(b) if (dept + lcm*i + d) % b == 0)
             dept += lcm*i
             lcm *= b
 
