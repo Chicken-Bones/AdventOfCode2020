@@ -4,16 +4,14 @@ if __name__ == "__main__":
     with open("input/day21.txt") as file:
         foods = []
         for l in file:
-            _1, _2 = re.match(r"(.+?) \(contains (.+)\)", l).groups()
-            foods.append((_1.split(" "), _2.split(", ")))
+            ingreds, allergens = re.match(r"(.+?) \(contains (.+)\)", l).groups()
+            foods.append((set(ingreds.split(" ")), allergens.split(", ")))
 
     all_allergens = set(a for _, allergens in foods for a in allergens)
-    all_ingreds = set(i for ingreds, _ in foods for i in ingreds)
-    potential_allergens = {i: [a for a in all_allergens if all(i in ingreds for ingreds, allergens in foods if a in allergens)] for i in all_ingreds}
+    allergens_to_ingreds = {a: set.intersection(*(ingreds for ingreds, allergens in foods if a in allergens)) for a in all_allergens}
+    potential_allergens = set(i for ingreds in allergens_to_ingreds for i in ingreds)
 
-    print(sum(not potential_allergens[i] for ingreds, _ in foods for i in ingreds))
-
-    allergens_to_ingreds = {a: [i for i, allergens in potential_allergens.items() if a in allergens] for a in all_allergens}
+    print(sum(i not in potential_allergens for ingreds, _ in foods for i in ingreds))
 
     def apply(allergens, used_ingreds):
         if not allergens:
