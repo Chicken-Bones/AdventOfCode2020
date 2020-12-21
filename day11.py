@@ -11,10 +11,7 @@ def simulate(seats, neighbour_func, occ_threshold):
             '#' if v == 'L' and occ == 0 else \
             v
 
-    while True:
-        new_seats = {pt: ca(v, occupied(*pt)) for pt, v in seats.items()}
-        if seats == new_seats:
-            break
+    while seats != (new_seats := {pt: ca(v, occupied(*pt)) for pt, v in seats.items()}):
         seats = new_seats
 
     return sum(v == '#' for v in seats.values())
