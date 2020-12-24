@@ -1,7 +1,9 @@
 import re
+from functools import reduce
 
 
-def move(x, y, dir):
+def move(t, dir):
+    x, y = t
     if len(dir) > 1:
         x += y % 2
         x += 0 if "e" in dir else -1
@@ -22,16 +24,12 @@ if __name__ == "__main__":
                 flipped.add(t)
 
         for l in file:
-            t = (0, 0)
-            for d in re.findall(r'([ns]?[ew])', l):
-                t = move(*t, d)
-
-            flip(t)
+            flip(reduce(move, re.findall(r'([ns]?[ew])', l), (0, 0)))
 
         print(len(flipped))
 
         def adj(t):
-            return (move(*t, d) for d in ["e", "w", "ne", "se", "sw", "nw"])
+            return (move(t, d) for d in ["e", "w", "ne", "se", "sw", "nw"])
 
         for _ in range(100):
             flip_white = set()
