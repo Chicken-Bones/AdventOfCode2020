@@ -1,65 +1,49 @@
+import re
+
+
+def move(x, y, dir):
+    if len(dir) > 1:
+        x += y % 2
+        x += 0 if "e" in dir else -1
+        y += 1 if "n" in dir else -1
+    else:
+        x += 1 if "e" in dir else -1
+
+    return x, y
+
+
 if __name__ == "__main__":
     with open("input/day24.txt") as file:
         flipped = set()
-        def move(x, y, dir):
-            if dir == "e":
-                x += 1
-            elif dir == "w":
-                x -= 1
-            elif dir == "ne":
-                if y % 2 == 0:
-                    x += 1
-                y += 1
-            elif dir == "nw":
-                if y % 2 != 0:
-                    x -= 1
-                y += 1
-            elif dir == "se":
-                if y % 2 == 0:
-                    x += 1
-                y -= 1
-            elif dir == "sw":
-                if y % 2 != 0:
-                    x -= 1
-                y -= 1
-
-            return x, y
-
-        def flip(x, y):
-            if (x, y) in flipped:
-                flipped.remove((x, y))
+        def flip(t):
+            if t in flipped:
+                flipped.remove(t)
             else:
-                flipped.add((x, y))
+                flipped.add(t)
 
         for l in file:
-            l = l.strip()
-            x, y = (0, 0)
-            while l != "":
-                d = l[:2] if l[0] == "n" or l[0] == "s" else l[0]
-                l = l[len(d):]
-                x, y = move(x, y, d)
+            t = (0, 0)
+            for d in re.findall(r'([ns]?[ew])', l):
+                t = move(*t, d)
 
-            flip(x, y)
+            flip(t)
 
         print(len(flipped))
 
-        def adj(x, y):
-            for dir in ["e", "w", "ne", "se", "sw", "nw"]:
-                yield move(x, y, dir)
+        def adj(t):
+            return (move(*t, d) for d in ["e", "w", "ne", "se", "sw", "nw"])
 
         for _ in range(100):
-            flip_white = []
-            flip_black = []
-            for x, y in flipped:
-                n = list(adj(x, y))
-                if sum(t in flipped for t in n) != 1:
-                    flip_white.append((x, y))
+            flip_white = set()
+            flip_black = set()
+            for b in flipped:
+                neighbours = list(adj(b))
+                if sum(t in flipped for t in neighbours) != 1:
+                    flip_white.add(b)
 
-                for x2, y2 in n:
-                    if sum(t in flipped for t in adj(x2, y2)) == 2:
-                        flip_black.append((x2, y2))
+                flip_black.update(n for n in neighbours if sum(t in flipped for t in adj(n)) == 2)
 
-            flipped.difference_update(flip_white)
-            flipped.update(flip_black)
+            flipped -= flip_white
+            flipped |= flip_black
 
         print(len(flipped))
