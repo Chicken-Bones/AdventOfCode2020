@@ -14,22 +14,18 @@ def move(t, dir):
     return x, y
 
 
+def adj(t):
+    return (move(t, d) for d in ["e", "w", "ne", "se", "sw", "nw"])
+
+
 if __name__ == "__main__":
     with open("input/day24.txt") as file:
         flipped = set()
-        def flip(t):
-            if t in flipped:
-                flipped.remove(t)
-            else:
-                flipped.add(t)
-
         for l in file:
-            flip(reduce(move, re.findall(r'([ns]?[ew])', l), (0, 0)))
+            t = reduce(move, re.findall(r'([ns]?[ew])', l), (0, 0))
+            flipped.symmetric_difference_update([t])
 
         print(len(flipped))
-
-        def adj(t):
-            return (move(t, d) for d in ["e", "w", "ne", "se", "sw", "nw"])
 
         for _ in range(100):
             flip_white = set()
